@@ -23,7 +23,7 @@ public class CombatController {
     }
 
     public void addCombatPlayer(Player player) {
-        CombatPlayer combatPlayer = new CombatPlayer(player);
+        CombatPlayer combatPlayer = new CombatPlayer(plugin, player);
         combats.put(player.getUniqueId(), combatPlayer);
         combatPlayer.startCombatTask(plugin, this);
     }
