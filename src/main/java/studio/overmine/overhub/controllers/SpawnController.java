@@ -1,5 +1,6 @@
 package studio.overmine.overhub.controllers;
 
+import org.bukkit.Bukkit;
 import studio.overmine.overhub.OverHub;
 import studio.overmine.overhub.utilities.FileConfig;
 import studio.overmine.overhub.utilities.SerializeUtil;
@@ -27,6 +28,6 @@ public class SpawnController {
     }
 
     public void toSpawn(Player player) {
-        player.teleport(getSpawnLocation(player));
+        Bukkit.getScheduler().runTask(OverHub.getPlugin(OverHub.class), () -> player.teleport(getSpawnLocation(player)));
     }
 }
