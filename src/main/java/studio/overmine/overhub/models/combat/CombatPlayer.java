@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 import studio.overmine.overhub.OverHub;
 import studio.overmine.overhub.controllers.CombatController;
+import studio.overmine.overhub.controllers.HotbarController;
+import studio.overmine.overhub.controllers.SpawnController;
 import studio.overmine.overhub.models.resources.types.ConfigResource;
 import studio.overmine.overhub.tasks.CombatTask;
 
@@ -17,12 +19,18 @@ import studio.overmine.overhub.tasks.CombatTask;
 @Getter @Setter
 public class CombatPlayer {
 
+    private final OverHub plugin;
     private final Player player;
     private CombatStatus status;
     private CombatTask combatTask;
+    private final HotbarController hotbarController;
+    private final SpawnController spawnController;
 
-    public CombatPlayer(Player player) {
+    public CombatPlayer(OverHub plugin, Player player) {
+        this.plugin = plugin;
         this.player = player;
+        this.hotbarController = plugin.getHotbarController();
+        this.spawnController = plugin.getSpawnController();
         this.status = CombatStatus.EQUIPPING;
     }
 
@@ -54,15 +62,19 @@ public class CombatPlayer {
         switch (status) {
             case EQUIPPING:
                 stopCombatTask();
-
                 status = CombatStatus.UN_EQUIPPING;
+                player.getInventory().clear();
                 player.getInventory().setArmorContents(ConfigResource.HUB_SWORD_SYSTEM_EQUIPMENT);
+                player.getInventory().setItemInMainHand(ConfigResource.HUB_SWORD_SYSTEM_SWORD);
                 break;
             case UN_EQUIPPING:
                 stopCombatTask();
 
                 combatController.removeCombatPlayer(player);
                 player.getInventory().setArmorContents(null);
+                player.getInventory().clear();
+                hotbarController.giveHotbar(player);
+                spawnController.toSpawn(player);
                 break;
         }
     }
